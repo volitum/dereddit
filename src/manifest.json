@@ -14,7 +14,10 @@
   ],
   "action": {
     "default_icon": {
-      "48": "icons/icon-48.png",
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "64": "icons/icon-64.png",
+      "96": "icons/icon-96.png",
       "128": "icons/icon-128.png"
     },
     "default_title": "DeReddit",
@@ -58,7 +61,10 @@
     }
   ],
   "icons": {
-    "48": "icons/icon-48.png",
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "64": "icons/icon-64.png",
+    "96": "icons/icon-96.png",
     "128": "icons/icon-128.png"
   },
   "minimum_chrome_version": "121"
