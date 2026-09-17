@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeReddit Settings</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+
+      <header class="header">
+        <img src="../icons/icon-48.png" alt="DeReddit" />
+        <div class="header-text">
+          <h1>DeReddit</h1>
+          <p>Settings</p>
+        </div>
+        <span id="save-indicator" role="status">Saved</span>
+      </header>
+
+      <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <div class="tabs" role="tablist" aria-label="Settings sections">
+        <button type="button" class="tab" id="tab-controls" role="tab"
+          aria-selected="true" aria-controls="panel-controls"
+          tabindex="0">Controls</button>
+        <button type="button" class="tab" id="tab-communities" role="tab"
+          aria-selected="false" aria-controls="panel-communities"
+          tabindex="-1">Communities</button>
+        <button type="button" class="tab" id="tab-backup" role="tab"
+          aria-selected="false" aria-controls="panel-backup"
+          tabindex="-1">Backup</button>
+      </div>
+
+      <main class="content">
+        <section class="tab-panel" id="panel-controls" role="tabpanel"
+          aria-labelledby="tab-controls" tabindex="0">
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Block pages</h2>
+            </div>
+            <div class="card-body">
+              <div class="check-grid">
+                <label class="checkbox-label"><input type="checkbox"
+                    role="switch"
+                    id="block-homepage" /><span>Homepage</span></label>
+                <label class="checkbox-label"><input type="checkbox"
+                    role="switch"
+                    id="block-popular" /><span>Popular</span></label>
+                <label class="checkbox-label"><input type="checkbox"
+                    role="switch" id="block-sub-home" /><span>All subreddit
+                    front pages<small>Includes hot, new, top and rising
+                      views.</small></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Content</h2></div>
+            <div class="card-body check-grid">
+              <label class="checkbox-label"><input type="checkbox" role="switch"
+                  id="hide-comments" /><span>Hide comments</span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Interface</h2></div>
+            <div class="card-body check-grid">
+              <label class="checkbox-label"><input type="checkbox" role="switch"
+                  id="hide-navbar" /><span>Hide navbar</span></label>
+              <label class="checkbox-label"><input type="checkbox" role="switch"
+                  id="hide-left-sidebar" /><span>Hide left
+                  sidebar</span></label>
+              <label class="checkbox-label"><input type="checkbox" role="switch"
+                  id="hide-right-sidebar" /><span>Hide right
+                  sidebar</span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header scroll-header">
+              <h2 class="card-title">Scroll limit</h2>
+              <label class="checkbox-label"><input type="checkbox" role="switch"
+                  id="limit-infinite-scroll"
+                  aria-label="Limit infinite scroll" /></label>
+            </div>
+            <div class="card-body">
+              <div class="scroll-options">
+                <label for="scroll-mode">Mode<select id="scroll-mode">
+                    <option value="fixed">Stop at the limit</option>
+                    <option value="button">Show next</option>
+                  </select></label>
+                <label for="scroll-limit">Posts per batch<input type="number"
+                    id="scroll-limit" min="1" step="1" value="25" /></label>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="tab-panel" id="panel-communities" role="tabpanel"
+          aria-labelledby="tab-communities" tabindex="0" hidden>
+          <div class="card community-list">
+            <div class="card-header">
+              <h2 class="card-title">Blocked subreddits</h2>
+              <span id="blocked-count" class="count"></span>
+            </div>
+            <div class="card-body">
+              <details class="mode-help">
+                <summary>Block modes</summary>
+                <p><strong>HOME</strong> blocks only the subreddit front page
+                  and sort views, such as hot, top, new, and rising.</p>
+                <p><strong>ALL</strong> blocks every page under that subreddit
+                  and hides its posts from Home, Popular, and r/all.</p>
+                <p>You can use <strong>*</strong> as a wildcard to filter
+                  multiple subreddits, for example
+                  <strong>*news*</strong> (filters subreddits containing
+                  "news"), <strong>*news</strong> (filters subreddits starting
+                  with "news"), or
+                  <strong>news*</strong> (filters subreddits ending with
+                  "news").</p>
+              </details>
+              <div class="add-row">
+                <button id="add-subreddit" class="btn btn-primary">+
+                  Add</button>
+                <button id="add-current-subreddit" class="btn btn-ghost">+ Add
+                  Current</button>
+              </div>
+              <div id="blocked-list"></div>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="tab-panel" id="panel-backup" role="tabpanel"
+          aria-labelledby="tab-backup" tabindex="0" hidden>
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Configuration
+                backup</h2></div>
+            <div class="card-body backup-actions">
+              <div>
+                <button id="export-config" class="btn btn-primary">Export
+                  configuration</button>
+                <p>Download your controls and community rules as a JSON
+                  file.</p>
+              </div>
+              <div>
+                <button id="import-config" class="btn btn-ghost"
+                  aria-describedby="import-help">Import configuration</button>
+                <p id="import-help">Settings included in the file replace their
+                  current values.</p>
+              </div>
+              <input type="file" id="import-file"
+                accept=".json,application/json" hidden />
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer>
+        <span>DeReddit v2.0.0</span>
+        <span aria-hidden="true">&middot;</span>
+        <nav class="footer-links" aria-label="Project links">
+          <a href="https://github.com/volitum/dereddit" target="_blank"
+            rel="noopener noreferrer">GitHub</a>
+          <span aria-hidden="true">&middot;</span>
+          <a href="https://github.com/volitum/dereddit/issues" target="_blank"
+            rel="noopener noreferrer">Report a bug</a>
+          <span aria-hidden="true">&middot;</span>
+          <a href="https://ko-fi.com/volitum/donate" target="_blank"
+            rel="noopener noreferrer">Support</a>
+        </nav>
+      </footer>
+    </div>
+    <script src="../shared/core.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

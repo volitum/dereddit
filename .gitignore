@@ -1,0 +1,9 @@
+/dist/
+/node_modules/
+/.web-ext-artifacts/
+/coverage/
+__pycache__/
+*.py[cod]
+*.log
+.DS_Store
+INFO.md

@@ -1,0 +1,24 @@
+{
+  "name": "dereddit",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Validation and packaging tools for the DeReddit browser extension",
+  "homepage": "https://github.com/volitum/dereddit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volitum/dereddit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/volitum/dereddit/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run check && python3 scripts/package.py",
+    "check": "node scripts/check.js",
+    "test": "node --test tests/unit/*.test.js",
+    "test:chrome": "python3 tests/browser/chrome.py",
+    "test:firefox": "python3 tests/browser/firefox.py"
+  }
+}

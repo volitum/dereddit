@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>DeReddit feed fixture</title>
+<style>body { font: 16px sans-serif; } shreddit-feed, shreddit-post { display: block; } article { padding: 10px; }</style>
+</head>
+<body>
+<header>Fixture navigation</header>
+<main><shreddit-feed></shreddit-feed></main>
+<aside><article><shreddit-post id="t3_sidebar" subreddit-name="safe">Sidebar post</shreddit-post></article></aside>
+<script>
+  window.loadCalls = 0;
+  window.loadLog = [];
+  window.plans = [];
+  window.post = (id, subreddit = "safe", extra = {}) => ({ id, subreddit, ...extra });
+  window.appendRows = (feed, rows) => {
+    for (const row of rows) {
+      const article = document.createElement("article");
+      const card = document.createElement("shreddit-post");
+      card.id = `t3_${row.id}`;
+      card.setAttribute("subreddit-name", row.subreddit);
+      card.setAttribute("permalink", `/r/${row.subreddit}/comments/${row.id}/title`);
+      if (row.ad) card.setAttribute("is-promoted", "");
+      const title = document.createElement("a");
+      title.href = card.getAttribute("permalink");
+      title.textContent = `Post ${row.id}`;
+      card.append(title);
+      article.append(card);
+      feed.append(article, document.createElement("hr"));
+    }
+  };
+  window.addLoader = (feed, cursor = "1") => {
+    const loader = document.createElement("faceplate-partial");
+    loader.setAttribute("slot", "load-after");
+    loader.setAttribute("src", `/svc/shreddit/feeds/test?cursor=${cursor}`);
+    loader.setAttribute("loading", "programmatic");
+    feed.append(loader);
+    return loader;
+  };
+  customElements.define("faceplate-partial", class extends HTMLElement {
+    loadContent() {
+      if (this.inflight) return this.inflight;
+      loadCalls++;
+      const plan = plans.shift();
+      loadLog.push({ src: this.getAttribute("src"), plan, stack: new Error().stack });
+      if (!plan) return Promise.reject(new Error("No planned response"));
+      const feed = this.closest("shreddit-feed");
+      this.inflight = new Promise((resolve, reject) => setTimeout(() => {
+        if (plan.error) { this.inflight = null; reject(new Error("Network error")); return; }
+        appendRows(feed, plan.rows || []);
+        if (!plan.keepLoader) {
+          this.remove();
+          if (plan.next) addLoader(feed, plan.next);
+        }
+        resolve();
+      }, plan.delay || 30));
+      return this.inflight;
+    }
+  });
+  window.resetFeed = (rows, nextPlans = [], more = false) => {
+    plans = nextPlans;
+    loadCalls = 0;
+    const feed = document.createElement("shreddit-feed");
+    appendRows(feed, rows);
+    if (more) addLoader(feed);
+    document.querySelector("shreddit-feed").replaceWith(feed);
+  };
+  window.configure = (settings) => window.dispatchEvent(new CustomEvent("dereddit-test-settings", {
+    detail: JSON.stringify(settings),
+  }));
+  window.shown = () => Array.from(document.querySelectorAll("main shreddit-post"))
+    .filter((el) => !el.parentElement.closest("shreddit-post")
+      && !el.hasAttribute("is-promoted") && el.getClientRects().length
+      && getComputedStyle(el).display !== "none")
+    .map((el) => el.id);
+</script>
+</body>
+</html>
